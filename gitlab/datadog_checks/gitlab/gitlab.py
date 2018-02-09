@@ -37,6 +37,13 @@ class GitlabCheck(PrometheusCheck):
 
     def check(self, instance):
         #### Metrics collection
+        self._check_prometheus(instance)
+
+        #### Service check to check Gitlab's health endpoints
+        for check_type in self.ALLOWED_SERVICE_CHECKS:
+            self._check_health_endpoint(instance, check_type)
+
+    def _check_prometheus(self, instance):
         endpoint = instance.get('prometheus_endpoint')
         if endpoint is None:
             raise CheckException("Unable to find prometheus_endpoint in config file.")
@@ -51,10 +58,6 @@ class GitlabCheck(PrometheusCheck):
             # Unable to connect to the metrics endpoint
             self.service_check(self.PROMETHEUS_SERVICE_CHECK_NAME, PrometheusCheck.CRITICAL,
                                message="Unable to retrieve Prometheus metrics from endpoint %s: %s" % (endpoint, e.message))
-
-        #### Service check to check Gitlab's health endpoints
-        for check_type in self.ALLOWED_SERVICE_CHECKS:
-            self._check_health_endpoint(instance, check_type)
 
 
     def _verify_ssl(self, instance):
