@@ -112,12 +112,96 @@ init_config:
     - prometheus_treecache_watcher_goroutines
     - prometheus_treecache_zookeeper_failures_total
 
+  # List of metrics to extract from the Experimental Prometheus endpoint
+  allowed_metrics_experimental:
+    - db_ping_latency_seconds
+    - db_ping_success
+    - db_ping_timeout
+    - gitlab_cache_operation_duration_seconds_bucket
+    - gitlab_cache_operation_duration_seconds_count
+    - gitlab_cache_operation_duration_seconds_sum
+    - gitlab_rails_queue_duration_seconds_bucket
+    - gitlab_rails_queue_duration_seconds_count
+    - gitlab_rails_queue_duration_seconds_sum
+    - gitlab_sql_duration_seconds_bucket
+    - gitlab_sql_duration_seconds_count
+    - gitlab_sql_duration_seconds_sum
+    - gitlab_transaction_allocated_memory_bytes_bucket
+    - gitlab_transaction_allocated_memory_bytes_count
+    - gitlab_transaction_allocated_memory_bytes_sum
+    - gitlab_transaction_cache_read_hit_count_total
+    - gitlab_transaction_duration_seconds_bucket
+    - gitlab_transaction_duration_seconds_count
+    - gitlab_transaction_duration_seconds_sum
+    - gitlab_transaction_new_redis_connections_total
+    - gitlab_transaction_rails_queue_duration
+    - gitlab_transaction_view_duration_total
+    - gitlab_view_rendering_duration_seconds_bucket
+    - gitlab_view_rendering_duration_seconds_count
+    - gitlab_view_rendering_duration_seconds_sum
+    - http_request_duration_seconds_bucket
+    - http_request_duration_seconds_count
+    - http_request_duration_seconds_sum
+    - http_requests_total
+    - redis_cache_ping_latency_seconds
+    - redis_cache_ping_success
+    - redis_cache_ping_timeout
+    - redis_ping_latency_seconds
+    - redis_ping_success
+    - redis_ping_timeout
+    - redis_queues_ping_latency_seconds
+    - redis_queues_ping_success
+    - redis_queues_ping_timeout
+    - redis_shared_state_ping_latency_seconds
+    - redis_shared_state_ping_success
+    - redis_shared_state_ping_timeout
+    - ruby_file_descriptors_total
+    - ruby_gc_count
+    - ruby_gc_heap_allocatable_pages
+    - ruby_gc_heap_allocated_pages
+    - ruby_gc_heap_available_slots
+    - ruby_gc_heap_eden_pages
+    - ruby_gc_heap_final_slots
+    - ruby_gc_heap_free_slots
+    - ruby_gc_heap_live_slots
+    - ruby_gc_heap_marked_slots
+    - ruby_gc_heap_sorted_length
+    - ruby_gc_heap_swept_slots
+    - ruby_gc_heap_tomb_pages
+    - ruby_gc_major_gc_count
+    - ruby_gc_malloc_increase_bytes
+    - ruby_gc_malloc_increase_bytes_limit
+    - ruby_gc_minor_gc_count
+    - ruby_gc_oldmalloc_increase_bytes
+    - ruby_gc_oldmalloc_increase_bytes_limit
+    - ruby_gc_old_objects
+    - ruby_gc_old_objects_limit
+    - ruby_gc_remembered_wb_unprotected_objects
+    - ruby_gc_remembered_wb_unprotected_objects_limit
+    - ruby_gc_time_total
+    - ruby_gc_total_allocated_objects
+    - ruby_gc_total_allocated_pages
+    - ruby_gc_total_freed_objects
+    - ruby_gc_total_freed_pages
+    - ruby_memory_usage_total
+    - ruby_sampler_duration_seconds_bucket
+    - ruby_sampler_duration_seconds_count
+    - ruby_sampler_duration_seconds_sum
+    - unicorn_active_connections
+    - unicorn_queued_connections
+
 instances:
     # Master URL to probe for service health status
   - gitlab_url: http://localhost
 
     # url of the metrics endpoint of prometheus
     prometheus_endpoint: http://localhost:9090
+
+    # url of the internal metrics endpoint
+    # This needs to be enabled in your Gitlab settings
+    # see https://docs.gitlab.com/ce/administration/monitoring/prometheus/gitlab_metrics.html
+    # prometheus_endpoint_internal: http://localhost/-/metrics
+
     # The histogram buckets can be noisy and generate a lot of tags.
     # send_histograms_buckets controls whether or not you want to pull them.
     #

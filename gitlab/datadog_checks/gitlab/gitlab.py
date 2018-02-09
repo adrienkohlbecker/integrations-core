@@ -18,6 +18,7 @@ class GitlabCheck(PrometheusCheck):
     DEFAULT_RECEIVE_TIMEOUT = 15
 
     PROMETHEUS_SERVICE_CHECK_NAME = 'gitlab.prometheus_endpoint_up'
+    PROMETHEUS_INTERNAL_SERVICE_CHECK_NAME = 'gitlab.prometheus_internal_endpoint_up'
 
     """
     Collect Gitlab metrics from Prometheus and validates that the connectivity with Gitlab
@@ -32,12 +33,21 @@ class GitlabCheck(PrometheusCheck):
         if not allowed_metrics:
             raise CheckException("At least one metric must be whitelisted in `allowed_metrics`.")
 
+        allowed_metrics_experimental = init_config.get('allowed_metrics_experimental')
+
+        if not allowed_metrics_experimental:
+            raise CheckException("At least one metric must be whitelisted in `allowed_metrics_experimental`.")
+
+        allowed_metrics += allowed_metrics_experimental
+        allowed_metrics = list(set(allowed_metrics))
+
         self.metrics_mapper = dict(zip(allowed_metrics, allowed_metrics))
         self.NAMESPACE = 'gitlab'
 
     def check(self, instance):
         #### Metrics collection
         self._check_prometheus(instance)
+        self._check_prometheus_internal(instance)
 
         #### Service check to check Gitlab's health endpoints
         for check_type in self.ALLOWED_SERVICE_CHECKS:
@@ -58,6 +68,22 @@ class GitlabCheck(PrometheusCheck):
             # Unable to connect to the metrics endpoint
             self.service_check(self.PROMETHEUS_SERVICE_CHECK_NAME, PrometheusCheck.CRITICAL,
                                message="Unable to retrieve Prometheus metrics from endpoint %s: %s" % (endpoint, e.message))
+
+    def _check_prometheus_internal(self, instance):
+        endpoint = instance.get('prometheus_endpoint_internal')
+        if endpoint is None:
+            return
+
+        # By default we send the buckets
+        send_buckets = _is_affirmative(instance.get('send_histograms_buckets', True))
+
+        try:
+            self.process(endpoint, send_histograms_buckets=send_buckets, instance=instance)
+            self.service_check(self.PROMETHEUS_INTERNAL_SERVICE_CHECK_NAME, PrometheusCheck.OK)
+        except requests.exceptions.ConnectionError as e:
+            # Unable to connect to the metrics endpoint
+            self.service_check(self.PROMETHEUS_INTERNAL_SERVICE_CHECK_NAME, PrometheusCheck.CRITICAL,
+                               message="Unable to retrieve internal Prometheus metrics from endpoint %s: %s" % (endpoint, e.message))
 
 
     def _verify_ssl(self, instance):
