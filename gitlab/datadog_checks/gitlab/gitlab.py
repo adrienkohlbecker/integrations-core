@@ -12,6 +12,7 @@ from util import headers
 # This list is up-to-date with Gitlab v10.3
 default_metrics = [
     # Metrics from regular prometheus endpoint
+    # Get this with `curl http://localhost:9090/metrics | grep -v "^#" | cut -d" " -f1 | cut -d"{" -f1 | sort | uniq`
     'go_gc_duration_seconds',
     'go_gc_duration_seconds_count',
     'go_gc_duration_seconds_sum',
@@ -164,6 +165,7 @@ default_metrics = [
     'prometheus_treecache_zookeeper_failures_total',
 
     # Metrics from the Experimental Prometheus endpoint
+    # Get this with `curl -k https://localhost/-/metrics | grep -v "^#" | cut -d" " -f1 | cut -d"{" -f1 | sort | uniq`
     'db_ping_latency_seconds',
     'db_ping_success',
     'db_ping_timeout',
