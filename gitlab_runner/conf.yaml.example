@@ -1,14 +1,20 @@
 init_config:
   # List of metrics to extract from Prometheus
   allowed_metrics:
-    - ci_docker_machines_provider_machine_creation_duration_seconds
+    - ci_docker_machines_provider_machine_creation_duration_seconds_bucket
+    - ci_docker_machines_provider_machine_creation_duration_seconds_count
+    - ci_docker_machines_provider_machine_creation_duration_seconds_sum
     - ci_docker_machines_provider_machine_states
     - ci_runner_builds
     - ci_runner_errors
     - ci_runner_version_info
-    - ci_ssh_docker_machines_provider_machine_creation_duration_seconds
+    - ci_ssh_docker_machines_provider_machine_creation_duration_seconds_bucket
+    - ci_ssh_docker_machines_provider_machine_creation_duration_seconds_count
+    - ci_ssh_docker_machines_provider_machine_creation_duration_seconds_sum
     - ci_ssh_docker_machines_provider_machine_states
     - go_gc_duration_seconds
+    - go_gc_duration_seconds_count
+    - go_gc_duration_seconds_sum
     - go_goroutines
     - go_memstats_alloc_bytes
     - go_memstats_alloc_bytes_total
