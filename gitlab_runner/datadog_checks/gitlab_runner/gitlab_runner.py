@@ -9,6 +9,56 @@ from checks.prometheus_check import PrometheusCheck
 from config import _is_affirmative
 from util import headers
 
+# This list is up-to-date with Gitlab Runner v9.3
+default_metrics = [
+    # Metrics from regular prometheus endpoint
+    # Get this with `curl http://localhost:9252/metrics | grep -v "^#" | cut -d" " -f1 | cut -d"{" -f1 | sort | uniq`
+    'ci_docker_machines_provider_machine_creation_duration_seconds_bucket',
+    'ci_docker_machines_provider_machine_creation_duration_seconds_count',
+    'ci_docker_machines_provider_machine_creation_duration_seconds_sum',
+    'ci_docker_machines_provider_machine_states',
+    'ci_runner_builds',
+    'ci_runner_errors',
+    'ci_runner_version_info',
+    'ci_ssh_docker_machines_provider_machine_creation_duration_seconds_bucket',
+    'ci_ssh_docker_machines_provider_machine_creation_duration_seconds_count',
+    'ci_ssh_docker_machines_provider_machine_creation_duration_seconds_sum',
+    'ci_ssh_docker_machines_provider_machine_states',
+    'go_gc_duration_seconds',
+    'go_gc_duration_seconds_count',
+    'go_gc_duration_seconds_sum',
+    'go_goroutines',
+    'go_memstats_alloc_bytes',
+    'go_memstats_alloc_bytes_total',
+    'go_memstats_buck_hash_sys_bytes',
+    'go_memstats_frees_total',
+    'go_memstats_gc_sys_bytes',
+    'go_memstats_heap_alloc_bytes',
+    'go_memstats_heap_idle_bytes',
+    'go_memstats_heap_inuse_bytes',
+    'go_memstats_heap_objects',
+    'go_memstats_heap_released_bytes_total',
+    'go_memstats_heap_sys_bytes',
+    'go_memstats_last_gc_time_seconds',
+    'go_memstats_lookups_total',
+    'go_memstats_mallocs_total',
+    'go_memstats_mcache_inuse_bytes',
+    'go_memstats_mcache_sys_bytes',
+    'go_memstats_mspan_inuse_bytes',
+    'go_memstats_mspan_sys_bytes',
+    'go_memstats_next_gc_bytes',
+    'go_memstats_other_sys_bytes',
+    'go_memstats_stack_inuse_bytes',
+    'go_memstats_stack_sys_bytes',
+    'go_memstats_sys_bytes',
+    'process_cpu_seconds_total',
+    'process_max_fds',
+    'process_open_fds',
+    'process_resident_memory_bytes',
+    'process_start_time_seconds',
+    'process_virtual_memory_bytes',
+]
+
 class GitlabRunnerCheck(PrometheusCheck):
 
     EVENT_TYPE = SOURCE_TYPE_NAME = 'gitlab_runner'
@@ -26,12 +76,15 @@ class GitlabRunnerCheck(PrometheusCheck):
         # Mapping from Prometheus metrics names to Datadog ones
         # For now it's a 1:1 mapping
         # TODO: mark some metrics as rate
+        metrics = default_metrics
+
         allowed_metrics = init_config.get('allowed_metrics')
+        if allowed_metrics:
+            metrics += allowed_metrics
 
-        if not allowed_metrics:
-            raise CheckException("At least one metric must be whitelisted in `allowed_metrics`.")
+        metrics = list(set(metrics))
 
-        self.metrics_mapper = dict(zip(allowed_metrics, allowed_metrics))
+        self.metrics_mapper = dict(zip(metrics, metrics))
         self.NAMESPACE = 'gitlab_runner'
 
     def check(self, instance):
