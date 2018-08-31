@@ -1,0 +1,11 @@
+init_config:
+
+instances:
+  - channel: 'DEV.ADMIN.SVRCONN'
+    queue_manager: 'datadog'
+    host: 'localhost'
+    port: '1414'
+    username: 'admin'
+    password: 'passw0rd'
+    queues:
+      - 'DEV.QUEUE.1'

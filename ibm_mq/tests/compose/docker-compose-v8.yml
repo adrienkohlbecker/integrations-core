@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  ibmmq:
+    image: datadog/docker-library:ibm_mq_v8
+    environment:
+      - MQ_QMGR_NAME=datadog
+      - LICENSE=accept
+    # volumes:
+    #   - ${TEMP_DIR}:/mnt/mqm
+    ports:
+      - "11414:1414"
