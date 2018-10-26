@@ -177,7 +177,7 @@ class IBMMQConfig:
 
         self.host = instance.get('host')
         self.port = instance.get('port')
-        self.host_and_port = "{}({})".format(host, port)
+        self.host_and_port = "{}({})".format(self.host, self.port)
 
         self.username = instance.get('username')
         self.password = instance.get('password')
